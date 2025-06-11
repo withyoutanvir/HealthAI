@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bubbles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  top: 0; left: 0;
+  pointer-events: none;
+}
+
+.bubbles::before,
+.bubbles::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.3); /* Tailwind blue-500 with opacity */
+  opacity: 0.6;
+  animation: bubbleMove 15s linear infinite;
+}
+
+.bubbles::before {
+  width: 100px;
+  height: 100px;
+  left: 10%;
+  bottom: -120px;
+  animation-delay: 0s;
+}
+
+.bubbles::after {
+  width: 150px;
+  height: 150px;
+  left: 70%;
+  bottom: -150px;
+  animation-delay: 7.5s;
+}
+
+@keyframes bubbleMove {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-120vh) translateX(40px);
+    opacity: 0;
+  }
+}
