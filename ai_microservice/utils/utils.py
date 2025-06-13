@@ -1,47 +1,57 @@
 import re
+from difflib import get_close_matches
 
 def clean_text(text):
-    """
-    Cleans OCR or extracted text by removing unwanted characters, multiple spaces, etc.
-    """
-    text = re.sub(r'\s+', ' ', text)  # replace multiple spaces/newlines with single space
-    text = text.strip()
-    return text
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
 
 def get_disease_solution_map():
-    """
-    Return a dictionary mapping diseases to possible treatments or advice.
-    """
     return {
-        "diabetes": "Maintain blood sugar levels with a healthy diet, exercise, and medication as prescribed.",
-        "asthma": "Use prescribed inhalers, avoid allergens, and monitor breathing regularly.",
+        "positive": "AI believes symptoms are not severe.",
+        "negative": "AI believes symptoms could be severe. Please consult a doctor.",
         "flu": "Stay hydrated, rest, and take antivirals if prescribed.",
-        "covid-19": "Isolate, monitor oxygen levels, stay hydrated, and seek medical help if symptoms worsen.",
-        "hypertension": "Reduce salt intake, manage stress, and take medication regularly.",
-        "heart disease": "Follow a cardiac diet, exercise moderately, and take prescribed meds.",
+        "covid-19": "Isolate, monitor oxygen levels, and seek help if needed.",
+        "diabetes": "Maintain a healthy diet, exercise, and monitor sugar levels.",
+        "asthma": "Avoid allergens and use prescribed inhalers.",
+        "hypertension": "Reduce salt, manage stress, and follow medication.",
+        "heart disease": "Exercise moderately and follow cardiac diet.",
+        "fever": "Monitor temperature, drink fluids, and rest. Seek help if fever persists.",
     }
 
-def enrich_prediction(prediction_result):
-    """
-    Converts prediction labels into a more informative dictionary with solutions.
-    """
-    solution_map = get_disease_solution_map()
+def lookup_description(label):
+    return get_disease_solution_map().get(label.lower(), "No medical advice available for this condition.")
+
+def enrich_prediction(prediction, input_text=None):
     enriched = []
 
-    for item in prediction_result:
-        label = item.get("label") or item.get("labels")  # based on model output format
-        if isinstance(label, list):  # multi-label case
-            for l in label:
+    # Custom keyword override if input text provided
+    if input_text:
+        keywords = list(get_disease_solution_map().keys())
+        words = input_text.lower().split()
+
+        for word in words:
+            close_match = get_close_matches(word, keywords, n=1, cutoff=0.8)
+            if close_match:
+                matched = close_match[0]
                 enriched.append({
-                    "disease": l,
-                    "confidence": item.get("score", 0),
-                    "solution": solution_map.get(l.lower(), "Consult a medical professional.")
+                    "label": matched.upper(),
+                    "score": 0.90,
+                    "description": lookup_description(matched)
                 })
-        else:
+                return enriched  # Prioritize keyword match over model if found
+
+    # Default logic from model output
+    if isinstance(prediction, str):
+        enriched.append({"label": prediction, "description": lookup_description(prediction)})
+
+    elif isinstance(prediction, list):
+        for item in prediction:
+            label = item.get("label") or item.get("labels")
+            score = item.get("score", None)
             enriched.append({
-                "disease": label,
-                "confidence": item.get("score", 0),
-                "solution": solution_map.get(label.lower(), "Consult a medical professional.")
+                "label": label,
+                "score": score,
+                "description": lookup_description(label)
             })
 
     return enriched

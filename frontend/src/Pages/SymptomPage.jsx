@@ -24,11 +24,13 @@ const SymptomPage = () => {
           setLoading(false);
           return;
         }
-        const { data } = await axios.post("http://localhost:5001/predict", {
+        const { data } = await axios.post("http://localhost:5000/analyze", {
+
           text: symptomText.trim(),
         });
         setExtractedText(symptomText);
-        setPrediction(data);
+        setPrediction(data.prediction);
+
       } else {
         setError("Please use the Analyze PDF button to analyze the uploaded file.");
       }
@@ -54,12 +56,15 @@ const SymptomPage = () => {
       const formData = new FormData();
       formData.append("file", pdfFile);
 
-      const { data } = await axios.post("http://localhost:5001/predict", formData, {
+      const { data } = await axios.post("http://localhost:5000/analyze", formData, {
+
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setExtractedText(data.text || "");
-      setPrediction(data.prediction || data); // depends on your backend response shape
+      setExtractedText(data.extracted_text || "");
+
+      setPrediction(data.prediction);
+ // depends on your backend response shape
     } catch (err) {
       setError(err.response?.data?.error || err.message || "Something went wrong");
     } finally {
