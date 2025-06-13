@@ -3,6 +3,8 @@ import FileUpload from "../components/FileUpload";
 import ReportCard from "../components/ReportCard";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const SymptomPage = () => {
   const [symptomText, setSymptomText] = useState("");
   const [pdfFile, setPdfFile] = useState(null);
@@ -24,13 +26,13 @@ const SymptomPage = () => {
           setLoading(false);
           return;
         }
-        const { data } = await axios.post("http://localhost:5000/analyze", {
 
+        const { data } = await axios.post(`${API_BASE_URL}/analyze`, {
           text: symptomText.trim(),
         });
+
         setExtractedText(symptomText);
         setPrediction(data.prediction);
-
       } else {
         setError("Please use the Analyze PDF button to analyze the uploaded file.");
       }
@@ -56,15 +58,12 @@ const SymptomPage = () => {
       const formData = new FormData();
       formData.append("file", pdfFile);
 
-      const { data } = await axios.post("http://localhost:5000/analyze", formData, {
-
+      const { data } = await axios.post(`${API_BASE_URL}/analyze`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       setExtractedText(data.extracted_text || "");
-
       setPrediction(data.prediction);
- // depends on your backend response shape
     } catch (err) {
       setError(err.response?.data?.error || err.message || "Something went wrong");
     } finally {
@@ -129,4 +128,4 @@ const SymptomPage = () => {
   );
 };
 
-export default SymptomPage; 
+export default SymptomPage;

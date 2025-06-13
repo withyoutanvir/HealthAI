@@ -12,7 +12,7 @@ const HistoryPage = ({ userId }) => {
       try {
         const token = localStorage.getItem("token");
         const { data } = await axios.get(
-          `http://localhost:5000/api/symptoms/${userId}`,
+          `https://healthai-production-9a99.up.railway.app/api/symptoms/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
