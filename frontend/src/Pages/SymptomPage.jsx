@@ -3,7 +3,7 @@ import FileUpload from "../components/FileUpload";
 import ReportCard from "../components/ReportCard";
 import axios from "axios";
 
-const API_BASE_URL =  "http://localhost:5000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 const SymptomPage = () => {
   const [symptomText, setSymptomText] = useState("");

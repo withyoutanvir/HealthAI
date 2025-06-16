@@ -9,6 +9,8 @@ const HistoryPage = ({ userId }) => {
   const API_BASE = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
+    
+
     const fetchHistory = async () => {
       const token = localStorage.getItem("token");
       if (!token) {

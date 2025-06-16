@@ -11,7 +11,8 @@ const ResetPassword = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const API_BASE = import.meta.env.VITE_API_URL;
+  // ✅ Use dynamic backend URL for Vercel/production
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +27,7 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE}/reset-password`, {
+      const res = await fetch(`${API_BASE}/users/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, password }),

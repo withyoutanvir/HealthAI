@@ -10,18 +10,23 @@ const RegistrationForm = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const API_BASE = import.meta.env.VITE_API_URL;
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
   const registerUser = async (name, email, password) => {
-    const res = await fetch(`${API_BASE}/register`, {
+    const res = await fetch(`${API_BASE}/users/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, password }),
     });
 
-    const data = await res.text();
-    if (!res.ok) throw new Error(data || 'Registration failed');
-    return JSON.parse(data);
+    const text = await res.text();
+    if (!res.ok) throw new Error(text || 'Registration failed');
+
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error('Invalid response from server');
+    }
   };
 
   const handleSubmit = async (e) => {

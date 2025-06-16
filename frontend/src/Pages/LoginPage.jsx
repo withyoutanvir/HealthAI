@@ -7,18 +7,25 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const API_BASE = import.meta.env.VITE_API_URL; // ✅ ensure this matches your .env
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  console.log("API_BASE:", API_BASE);
+
 
   const loginUser = async (email, password) => {
-    const res = await fetch(`${API_BASE}/login`, {
+    const res = await fetch(`${API_BASE}/users/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Login failed');
-    return data;
+    const text = await res.text();
+    try {
+      const data = JSON.parse(text);
+      if (!res.ok) throw new Error(data.message || 'Login failed');
+      return data;
+    } catch {
+      throw new Error('Invalid response from server');
+    }
   };
 
   const handleSubmit = async (e) => {
