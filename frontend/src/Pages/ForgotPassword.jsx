@@ -9,6 +9,8 @@ const ForgotPassword = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const API_BASE = import.meta.env.VITE_API_URL;
+
   // Step 1: Send OTP
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -16,7 +18,7 @@ const ForgotPassword = () => {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch('/api/users/forgot-password', {
+      const res = await fetch(`${API_BASE}/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -39,7 +41,7 @@ const ForgotPassword = () => {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch('/api/users/reset-password', {
+      const res = await fetch(`${API_BASE}/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, password }),

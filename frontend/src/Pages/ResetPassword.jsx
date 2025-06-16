@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
-
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [password, setPassword] = useState('');
@@ -11,6 +10,8 @@ const ResetPassword = () => {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +26,7 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(`/api/users/reset-password`, {
+      const res = await fetch(`${API_BASE}/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, password }),
@@ -44,14 +45,19 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4" style={{ backgroundImage: "linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%)" }}>
+    <div
+      className="flex items-center justify-center min-h-screen px-4"
+      style={{ backgroundImage: "linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%)" }}
+    >
       <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg p-6 bg-white rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-center text-[#1877F2] mb-4">Reset Password</h1>
         {message && <p className="text-green-600 text-center mb-4">{message}</p>}
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="label"><span className="text-base label-text text-[#1877F2]">Email</span></label>
+            <label className="label">
+              <span className="text-base label-text text-[#1877F2]">Email</span>
+            </label>
             <input
               type="email"
               required
@@ -62,7 +68,9 @@ const ResetPassword = () => {
             />
           </div>
           <div>
-            <label className="label"><span className="text-base label-text text-[#1877F2]">OTP</span></label>
+            <label className="label">
+              <span className="text-base label-text text-[#1877F2]">OTP</span>
+            </label>
             <input
               type="text"
               required
@@ -73,7 +81,9 @@ const ResetPassword = () => {
             />
           </div>
           <div>
-            <label className="label"><span className="text-base label-text text-[#1877F2]">New Password</span></label>
+            <label className="label">
+              <span className="text-base label-text text-[#1877F2]">New Password</span>
+            </label>
             <input
               type="password"
               required
@@ -84,7 +94,9 @@ const ResetPassword = () => {
             />
           </div>
           <div>
-            <label className="label"><span className="text-base label-text text-[#1877F2]">Confirm Password</span></label>
+            <label className="label">
+              <span className="text-base label-text text-[#1877F2]">Confirm Password</span>
+            </label>
             <input
               type="password"
               required

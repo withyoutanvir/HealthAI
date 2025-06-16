@@ -10,8 +10,10 @@ const RegistrationForm = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const API_BASE = import.meta.env.VITE_API_URL;
+
   const registerUser = async (name, email, password) => {
-    const res = await fetch('/api/users/register', {
+    const res = await fetch(`${API_BASE}/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, password }),
@@ -35,7 +37,6 @@ const RegistrationForm = () => {
 
     try {
       await registerUser(name, email, password);
-      // Delay slightly to let spinner show before redirect
       setTimeout(() => navigate("/login"), 500);
     } catch (err) {
       setError(err.message);
@@ -55,7 +56,9 @@ const RegistrationForm = () => {
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label className="label"><span className="text-base label-text text-[#1877F2]">Name</span></label>
+            <label className="label">
+              <span className="text-base label-text text-[#1877F2]">Name</span>
+            </label>
             <input
               type="text"
               placeholder="Name"
@@ -66,7 +69,9 @@ const RegistrationForm = () => {
             />
           </div>
           <div>
-            <label className="label"><span className="text-base label-text text-[#1877F2]">Email</span></label>
+            <label className="label">
+              <span className="text-base label-text text-[#1877F2]">Email</span>
+            </label>
             <input
               type="email"
               placeholder="Email Address"
@@ -77,7 +82,9 @@ const RegistrationForm = () => {
             />
           </div>
           <div>
-            <label className="label"><span className="text-base label-text text-[#1877F2]">Password</span></label>
+            <label className="label">
+              <span className="text-base label-text text-[#1877F2]">Password</span>
+            </label>
             <input
               type="password"
               placeholder="Enter Password"
@@ -88,7 +95,9 @@ const RegistrationForm = () => {
             />
           </div>
           <div>
-            <label className="label"><span className="text-base label-text text-[#1877F2]">Confirm Password</span></label>
+            <label className="label">
+              <span className="text-base label-text text-[#1877F2]">Confirm Password</span>
+            </label>
             <input
               type="password"
               placeholder="Confirm Password"

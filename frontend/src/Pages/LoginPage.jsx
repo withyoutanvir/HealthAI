@@ -7,8 +7,10 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  const API_BASE = import.meta.env.VITE_API_URL; // ✅ ensure this matches your .env
+
   const loginUser = async (email, password) => {
-    const res = await fetch('/api/users/login', {
+    const res = await fetch(`${API_BASE}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
