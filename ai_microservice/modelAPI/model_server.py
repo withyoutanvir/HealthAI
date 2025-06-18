@@ -4,11 +4,12 @@ from transformers import pipeline
 from flask_cors import CORS
 import PyPDF2
 import io
+import os  # Required for Railway PORT
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173"])
+CORS(app, origins=["*"])
 
-# Load a sentiment analysis pipeline from Hugging Face
+# Load pipeline
 nlp_pipeline = pipeline("sentiment-analysis")
 
 @app.route('/predict', methods=['POST'])
@@ -31,11 +32,11 @@ def predict():
             return jsonify({"error": "Empty text input"}), 400
 
     try:
-        result = nlp_pipeline(text[:512])  # truncate to 512 tokens
-        # result is like: [{'label': 'POSITIVE', 'score': 0.998}]
+        result = nlp_pipeline(text[:512])
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    port = int(os.environ["PORT"])  # ✅ Use Railway's assigned port
+    app.run(debug=False, host="0.0.0.0", port=port)
