@@ -4,7 +4,7 @@ import requests
 import os
 
 # Use environment variable, fallback to local dev if not set
-MODEL_API_URL = os.getenv("AI_SERVICE_URL", "http://localhost:5001") + "/predict"
+MODEL_API_URL = os.getenv("AI_SERVICE_URL", "http://localhost:5001") + "/analyze"
 
 def get_model_prediction(text):
     try:

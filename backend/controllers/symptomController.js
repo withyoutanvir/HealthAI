@@ -25,7 +25,7 @@ export const submitSymptoms = async (req, res) => {
       );
 
       const aiRes = await axios.post(
-        'https://healthai-production-9a99.up.railway.app//analyze',
+        'https://healthai-production-9a99.up.railway.app/analyze',
         form,
         { headers: form.getHeaders() }
       );
@@ -38,7 +38,7 @@ export const submitSymptoms = async (req, res) => {
     } else {
       //  no file: just send symptom text to NLP microservice
       const aiRes = await axios.post(
-        'https://healthai-production-9a99.up.railway.app//predict',
+        'https://healthai-production-9a99.up.railway.app/predict',
         { text: symptomsText }
       );
       predictedConditions = aiRes.data.map(item => item.label || item);
