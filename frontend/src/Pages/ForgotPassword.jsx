@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 
 const ForgotPassword = () => {
   const [step, setStep] = useState(1);
@@ -9,7 +10,6 @@ const ForgotPassword = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Automatically switches between local and production based on environment
   const API_BASE = import.meta.env.VITE_API_URL;
 
   const handleSendOtp = async (e) => {
@@ -60,88 +60,77 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div
-      className="flex items-center justify-center min-h-screen px-4"
-      style={{
-        backgroundImage:
-          "linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%)",
-      }}
-    >
-      <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg p-6 bg-white rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-center text-[#1877F2] mb-4">
+    <div className="flex items-center justify-center min-h-screen px-4 bg-gradient-to-tl from-[#1E90FF] via-[#32CD32] to-[#FFA07A] animate-fade-up">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg p-8 bg-white rounded-2xl shadow-xl backdrop-blur border border-white/30"
+      >
+        <h1 className="text-3xl font-extrabold text-center text-[#1E90FF] mb-6 tracking-wide">
           {step === 1 ? "Forgot Password" : "Reset Password"}
         </h1>
 
-        {message && (
-          <p className="text-green-600 text-center mb-4">{message}</p>
-        )}
+        {message && <p className="text-green-600 text-center mb-4">{message}</p>}
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
         {step === 1 ? (
-          <form onSubmit={handleSendOtp} className="space-y-4">
+          <form onSubmit={handleSendOtp} className="space-y-6">
             <div>
-              <label className="label">
-                <span className="text-base label-text text-[#1877F2]">
-                  Email Address
-                </span>
+              <label className="block mb-2 text-[#1E90FF] font-semibold">
+                Email Address
               </label>
               <input
                 type="email"
                 required
                 placeholder="Enter your email"
-                className="w-full input input-bordered border-gray-300 focus:border-[#1877F2] focus:ring focus:ring-[#1877F2]/50"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E90FF]"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <button
               type="submit"
-              className="btn btn-block bg-[#1877F2] hover:bg-[#155fcf] text-white font-semibold"
+              className="w-full py-2 bg-[#1E90FF] hover:bg-[#32CD32] text-white rounded-lg transition duration-300 shadow-lg hover:shadow-xl"
               disabled={loading}
             >
               {loading ? "Sending OTP..." : "Send OTP"}
             </button>
           </form>
         ) : (
-          <form onSubmit={handleResetPassword} className="space-y-4">
+          <form onSubmit={handleResetPassword} className="space-y-6">
             <div>
-              <label className="label">
-                <span className="text-base label-text text-[#1877F2]">OTP</span>
-              </label>
+              <label className="block mb-2 text-[#1E90FF] font-semibold">OTP</label>
               <input
                 type="text"
                 required
                 placeholder="Enter OTP"
-                className="w-full input input-bordered border-gray-300 focus:border-[#1877F2] focus:ring focus:ring-[#1877F2]/50"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E90FF]"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
               />
             </div>
             <div>
-              <label className="label">
-                <span className="text-base label-text text-[#1877F2]">
-                  New Password
-                </span>
-              </label>
+              <label className="block mb-2 text-[#1E90FF] font-semibold">New Password</label>
               <input
                 type="password"
                 required
                 placeholder="Enter new password"
-                className="w-full input input-bordered border-gray-300 focus:border-[#1877F2] focus:ring focus:ring-[#1877F2]/50"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E90FF]"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <button
               type="submit"
-              className="btn btn-block bg-[#1877F2] hover:bg-[#155fcf] text-white font-semibold"
+              className="w-full py-2 bg-[#1E90FF] hover:bg-[#32CD32] text-white rounded-lg transition duration-300 shadow-lg hover:shadow-xl"
               disabled={loading}
             >
               {loading ? "Resetting..." : "Reset Password"}
             </button>
           </form>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };

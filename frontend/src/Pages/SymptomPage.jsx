@@ -1,9 +1,24 @@
+// Required dependencies:
+// npm install framer-motion react-icons react-router-dom
+
 import React, { useState } from "react";
 import FileUpload from "../components/FileUpload";
 import ReportCard from "../components/ReportCard";
 import axios from "axios";
+import { motion } from "framer-motion";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/analyze`
+  : "http://localhost:3000/api/analyze";
+
+const animationVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: (i = 1) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.2, duration: 0.6, ease: "easeOut" },
+  }),
+};
 
 const SymptomPage = () => {
   const [symptomText, setSymptomText] = useState("");
@@ -20,21 +35,17 @@ const SymptomPage = () => {
     setExtractedText("");
 
     try {
-      if (!pdfFile) {
-        if (!symptomText.trim()) {
-          setError("Please enter symptoms or upload a PDF.");
-          setLoading(false);
-          return;
-        }
+      if (!pdfFile && symptomText.trim()) {
+        const { data } = await axios.post(
+          API_BASE_URL,
+          { text: symptomText.trim() },
+          { headers: { "Content-Type": "application/json" } }
+        );
 
-        const { data } = await axios.post(`${API_BASE_URL}/analyze`, {
-          text: symptomText.trim(),
-        });
-
-        setExtractedText(symptomText);
-        setPrediction(data.prediction);
+        setExtractedText(data.extracted_text || symptomText);
+        setPrediction(data.precautions || data);
       } else {
-        setError("Please use the Analyze PDF button to analyze the uploaded file.");
+        setError("Please use the PDF button if you're uploading a file.");
       }
     } catch (err) {
       setError(err.response?.data?.error || err.message || "Something went wrong");
@@ -58,12 +69,12 @@ const SymptomPage = () => {
       const formData = new FormData();
       formData.append("file", pdfFile);
 
-      const { data } = await axios.post(`${API_BASE_URL}/analyze`, formData, {
+      const { data } = await axios.post(API_BASE_URL, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       setExtractedText(data.extracted_text || "");
-      setPrediction(data.prediction);
+      setPrediction(data.precautions || data);
     } catch (err) {
       setError(err.response?.data?.error || err.message || "Something went wrong");
     } finally {
@@ -72,59 +83,114 @@ const SymptomPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white px-4 py-8 flex flex-col items-center">
-      <h1 className="text-3xl font-bold mb-6">AI Symptom Analyzer</h1>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={animationVariants}
+      className="min-h-screen bg-gradient-to-br from-[#1E90FF] via-[#32CD32] to-[#FFA07A] text-[#333333] px-4 py-12 flex flex-col items-center font-sans"
+    >
+      <motion.h1
+        custom={1}
+        initial="hidden"
+        animate="visible"
+        variants={animationVariants}
+        className="text-4xl font-extrabold mb-8 text-white drop-shadow-lg"
+      >
+        AI Symptom Analyzer
+      </motion.h1>
 
-      <textarea
+      <motion.textarea
+        custom={2}
+        initial="hidden"
+        animate="visible"
+        variants={animationVariants}
         rows={5}
         value={symptomText}
         onChange={(e) => setSymptomText(e.target.value)}
         placeholder="Enter symptoms manually..."
-        className="w-full max-w-2xl p-4 rounded bg-gray-800 border border-gray-700 mb-4 text-white"
+        className="w-full max-w-2xl p-4 rounded-xl bg-white/80 border border-gray-300 mb-4 text-[#333333] shadow-lg"
       />
 
-      <FileUpload
-        onFileSelect={setPdfFile}
-        onExtractedText={setExtractedText}
-        onPrediction={setPrediction}
-      />
+      <motion.div
+        custom={3}
+        initial="hidden"
+        animate="visible"
+        variants={animationVariants}
+        className="w-full max-w-2xl"
+      >
+        <FileUpload
+          onFileSelect={setPdfFile}
+          onExtractedText={setExtractedText}
+          onPrediction={setPrediction}
+        />
+      </motion.div>
 
-      <button
+      <motion.button
+        custom={4}
+        initial="hidden"
+        animate="visible"
+        variants={animationVariants}
         onClick={handleAnalyze}
-        className="btn btn-primary mt-6 px-6 py-2 bg-blue-600 rounded hover:bg-blue-700 transition disabled:opacity-50"
+        className="mt-6 px-6 py-2 bg-[#1E90FF] rounded-xl hover:bg-[#32CD32] text-white transition-all duration-300 shadow-md hover:shadow-xl"
         disabled={loading}
       >
         {loading ? "Analyzing..." : "Submit Symptoms"}
-      </button>
+      </motion.button>
 
       {pdfFile && (
-        <button
+        <motion.button
+          custom={5}
+          initial="hidden"
+          animate="visible"
+          variants={animationVariants}
           onClick={handlePdfAnalyze}
-          className="btn btn-secondary mt-4 px-6 py-2 bg-green-600 rounded hover:bg-green-700 transition disabled:opacity-50"
+          className="mt-4 px-6 py-2 bg-[#32CD32] rounded-xl hover:bg-[#1E90FF] text-white transition-all duration-300 shadow-md hover:shadow-xl"
           disabled={loading}
         >
           {loading ? "Analyzing PDF..." : "Analyze PDF"}
-        </button>
+        </motion.button>
       )}
 
-      {error && <p className="text-red-400 mt-4">{error}</p>}
+      {error && (
+        <motion.p
+          custom={6}
+          initial="hidden"
+          animate="visible"
+          variants={animationVariants}
+          className="text-red-500 mt-4 bg-white/70 px-4 py-2 rounded shadow-lg"
+        >
+          {error}
+        </motion.p>
+      )}
 
       {extractedText && (
-        <div className="mt-6 w-full max-w-2xl">
-          <h2 className="text-lg font-semibold mb-2">Extracted Text:</h2>
-          <div className="bg-gray-800 p-4 rounded border border-gray-700 whitespace-pre-wrap">
+        <motion.div
+          custom={7}
+          initial="hidden"
+          animate="visible"
+          variants={animationVariants}
+          className="mt-6 w-full max-w-2xl"
+        >
+          <h2 className="text-lg font-semibold mb-2 text-white">Extracted Text:</h2>
+          <div className="bg-white/80 p-4 rounded-xl border border-gray-300 text-[#333333] whitespace-pre-wrap shadow-lg">
             {extractedText}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {prediction && (
-        <div className="mt-6 w-full max-w-2xl">
-          <h2 className="text-lg font-semibold mb-2">AI Prediction:</h2>
+        <motion.div
+          custom={8}
+          initial="hidden"
+          animate="visible"
+          variants={animationVariants}
+          className="mt-6 w-full max-w-2xl"
+        >
+          <h2 className="text-lg font-semibold mb-2 text-white">AI Precaution Advice:</h2>
           <ReportCard report={prediction} />
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

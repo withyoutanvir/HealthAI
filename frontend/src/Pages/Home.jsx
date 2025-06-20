@@ -1,5 +1,9 @@
-import React from "react";
+// Required dependencies:
+// npm install framer-motion react-icons react-router-dom
+
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   FaShieldAlt,
   FaHeartbeat,
@@ -11,33 +15,58 @@ import {
   FaCogs,
 } from "react-icons/fa";
 
-const animationDelayClasses = [
-  "delay-75",
-  "delay-150",
-  "delay-300",
-  "delay-450",
-  "delay-600",
-];
+const animationVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: (i = 1) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.2, duration: 0.6, ease: "easeOut" },
+  }),
+};
+
+const Preloader = () => (
+  <div className="fixed inset-0 z-[9999] bg-white flex items-center justify-center">
+    <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-[#1E90FF] border-b-[#32CD32]"></div>
+  </div>
+);
 
 const HomePage = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) return <Preloader />;
+
   return (
-    <div className="bg-white text-gray-800 min-h-screen scroll-smooth">
+    <div className="bg-gradient-to-b from-white to-[#f2f2f2] text-[#333333] font-sans min-h-screen scroll-smooth">
       {/* Header */}
-      <header className="bg-blue-600 text-white p-4 shadow-md sticky top-0 z-50 transition duration-500 ease-in-out transform hover:scale-105">
+      <header className="bg-gradient-to-r from-[#1E90FF] to-[#32CD32] text-white p-5 shadow-lg sticky top-0 z-50">
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Health AI</h1>
-          <nav className="space-x-6">
-            {["Home", "About", "Features", "How It Works", "FAQ", "Testimonials", "Contact"].map(
-              (item, idx) => (
+          <h1 className="text-3xl font-extrabold tracking-wider">Health AI</h1>
+          <nav className="space-x-6 hidden md:flex">
+            {["History", "About", "Features", "Testimonials", "Contact"].map((item, idx) => {
+              const id = item.toLowerCase().replace(/ /g, "");
+              return item === "History" ? (
+                <Link
+                  key={idx}
+                  to="/history"
+                  className="hover:text-yellow-100 transition duration-300 font-medium"
+                >
+                  {item}
+                </Link>
+              ) : (
                 <a
                   key={idx}
-                  href={`#${item.toLowerCase().replace(/ /g, "")}`}
-                  className="hover:underline hover:text-blue-300 transition duration-300"
+                  href={`#${id}`}
+                  className="hover:text-yellow-100 transition duration-300 font-medium"
                 >
                   {item}
                 </a>
-              )
-            )}
+              );
+            })}
           </nav>
         </div>
       </header>
@@ -45,184 +74,185 @@ const HomePage = () => {
       {/* Hero */}
       <section
         id="hero"
-        className="bg-blue-50 py-24 text-center px-4 bg-[url('/hero-bg.jpg')] bg-cover bg-center animate-fadeInUp"
-        style={{ animationDuration: "1s" }}
+        className="bg-gradient-to-br from-[#1E90FF] via-[#32CD32] to-[#FFA07A] py-24 px-6 text-center"
       >
-        <div className="bg-white/80 p-10 rounded-xl inline-block shadow-lg transform transition hover:scale-105 duration-500">
-          <h2 className="text-5xl font-bold mb-4 text-blue-700">Your Personal Health Assistant</h2>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          variants={animationVariants}
+          viewport={{ once: true }}
+          className="bg-white/90 backdrop-blur p-10 rounded-2xl inline-block shadow-xl border border-white/30"
+        >
+          <h2 className="text-5xl font-extrabold mb-4 text-[#1E90FF] tracking-wide leading-tight">
+            Your Personal Health Assistant
+          </h2>
           <p className="text-lg mb-6">AI-powered insights to help you live healthier, longer.</p>
           <Link to="/register">
-            <button className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition text-lg shadow-md hover:shadow-xl">
+            <button className="bg-[#1E90FF] hover:bg-[#32CD32] text-white px-8 py-3 rounded-lg transition text-lg shadow-md hover:shadow-xl">
               Get Started
             </button>
           </Link>
-        </div>
+        </motion.div>
       </section>
 
-      {/* About Section */}
-      <section
-        id="about"
-        className="py-16 px-4 bg-white container mx-auto animate-fadeInUp"
-        style={{ animationDuration: "1s", animationDelay: "0.2s" }}
-      >
-        <h3 className="text-3xl font-bold mb-6 text-center">About Health AI</h3>
-        <p className="text-center text-gray-600 max-w-3xl mx-auto">
-          Health AI is a cutting-edge digital health platform that leverages artificial intelligence to
-          provide real-time diagnostics, personalized health recommendations, and secure data management
-          for individuals and medical professionals.
-        </p>
-      </section>
+      {/* Sections */}
+      {["about", "features", "how", "faq", "testimonials"].map((id, index) => (
+        <motion.section
+          id={id}
+          key={id}
+          className="py-20 px-4 container mx-auto"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={animationVariants}
+          custom={index + 1}
+        >
+          {id === "about" && (
+            <>
+              <h3 className="text-4xl font-bold mb-6 text-center text-[#1E90FF]">About Health AI</h3>
+              <p className="text-center max-w-3xl mx-auto text-lg leading-relaxed">
+                Health AI combines cutting-edge AI with intuitive tools to give you real-time diagnostics,
+                intelligent recommendations, and complete control over your health data.
+              </p>
+            </>
+          )}
 
-      {/* Features */}
-      <section
-        id="features"
-        className="py-20 container mx-auto px-4 animate-fadeInUp"
-        style={{ animationDuration: "1s", animationDelay: "0.3s" }}
-      >
-        <h3 className="text-3xl font-bold mb-12 text-center">Key Features</h3>
-        <div className="grid md:grid-cols-3 gap-10 text-center">
-          {[
-            {
-              icon: <FaBrain className="text-4xl text-blue-600 mb-4" />,
-              title: "Smart Diagnosis",
-              desc: "Real-time analysis based on your symptoms using AI and ML models.",
-            },
-            {
-              icon: <FaHeartbeat className="text-4xl text-blue-600 mb-4" />,
-              title: "Health Tracker",
-              desc: "Monitor vitals, activity, and sleep through connected devices.",
-            },
-            {
-              icon: <FaShieldAlt className="text-4xl text-blue-600 mb-4" />,
-              title: "Secure Data",
-              desc: "Your health data stays private, encrypted and under your control.",
-            },
-          ].map((feature, index) => (
-            <div
-              key={index}
-              className={`bg-white border p-8 rounded-xl shadow hover:shadow-lg transition-transform duration-150 ease-linear transform hover:-translate-y-2 hover:scale-105 ${animationDelayClasses[index % animationDelayClasses.length]} animate-fadeInUp`}
-              style={{ animationDuration: "1s" }}
-            >
-              {feature.icon}
-              <h4 className="text-xl font-semibold mb-2">{feature.title}</h4>
-              <p className="text-gray-600">{feature.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section
-        id="how"
-        className="bg-blue-50 py-20 px-4 animate-fadeInUp"
-        style={{ animationDuration: "1s", animationDelay: "0.4s" }}
-      >
-        <div className="container mx-auto">
-          <h3 className="text-3xl font-bold mb-12 text-center">How It Works</h3>
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            {[
-              "Upload symptoms or reports",
-              "AI analyzes data in real-time",
-              "Get results & insights instantly",
-            ].map((step, i) => (
-              <div
-                key={i}
-                className={`bg-white p-6 rounded-xl shadow hover:shadow-lg transition-transform duration-150 ease-linear transform hover:-translate-y-2 hover:scale-105 ${animationDelayClasses[i % animationDelayClasses.length]} animate-fadeInUp`}
-                style={{ animationDuration: "1s" }}
-              >
-                <FaCogs className="text-4xl text-blue-600 mb-4 mx-auto" />
-                <h4 className="text-xl font-semibold">Step {i + 1}</h4>
-                <p className="mt-2 text-gray-600">{step}</p>
+          {id === "features" && (
+            <>
+              <h3 className="text-4xl font-bold mb-12 text-center text-[#1E90FF]">Key Features</h3>
+              <div className="grid md:grid-cols-3 gap-10 text-center">
+                {[
+                  {
+                    icon: <FaBrain className="text-5xl text-[#32CD32] mb-4 animate-bounce" />,
+                    title: "Smart Diagnosis",
+                    desc: "AI-powered real-time analysis based on your symptoms.",
+                  },
+                  {
+                    icon: <FaHeartbeat className="text-5xl text-[#32CD32] mb-4 animate-bounce delay-200" />,
+                    title: "Health Tracker",
+                    desc: "Track vital signs, activity, and sleep easily.",
+                  },
+                  {
+                    icon: <FaShieldAlt className="text-5xl text-[#32CD32] mb-4 animate-bounce delay-400" />,
+                    title: "Secure Data",
+                    desc: "Your health data is encrypted and fully under your control.",
+                  },
+                ].map((f, i) => (
+                  <motion.div
+                    key={i}
+                    className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-all hover:-translate-y-2 hover:scale-105"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={animationVariants}
+                    custom={i + 1}
+                  >
+                    {f.icon}
+                    <h4 className="text-xl font-semibold mb-2">{f.title}</h4>
+                    <p>{f.desc}</p>
+                  </motion.div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </>
+          )}
 
-      {/* FAQ */}
-      <section
-        id="faq"
-        className="py-20 container mx-auto px-4 animate-fadeInUp"
-        style={{ animationDuration: "1s", animationDelay: "0.5s" }}
-      >
-        <h3 className="text-3xl font-bold mb-10 text-center">FAQs</h3>
-        <div className="space-y-6 max-w-3xl mx-auto">
-          {[
-            {
-              q: "Is my health data secure?",
-              a: "Absolutely. We use end-to-end encryption and decentralized storage for complete data privacy.",
-            },
-            {
-              q: "Can I use it without medical knowledge?",
-              a: "Yes. Our app is designed to be user-friendly and helpful for everyone.",
-            },
-            {
-              q: "Is Health AI free to use?",
-              a: "We offer both free and premium plans based on your needs.",
-            },
-          ].map((faq, index) => (
-            <div
-              key={index}
-              className={`border-b pb-4 animate-fadeInUp ${animationDelayClasses[index % animationDelayClasses.length]}`}
-              style={{ animationDuration: "1s" }}
-            >
-              <h4 className="font-semibold text-lg flex items-center gap-2">
-                <FaQuestionCircle className="text-blue-600" /> {faq.q}
-              </h4>
-              <p className="text-gray-600 ml-6 mt-1">{faq.a}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section
-        id="testimonials"
-        className="bg-gray-50 py-20 px-4 animate-fadeInUp"
-        style={{ animationDuration: "1s", animationDelay: "0.6s" }}
-      >
-        <div className="container mx-auto">
-          <h3 className="text-3xl font-bold mb-12 text-center">What Users Say</h3>
-          <div className="grid md:grid-cols-2 gap-8">
-            {[
-              {
-                name: "Dr. Priya S.",
-                text: "An excellent tool for both patients and clinicians. The AI suggestions are incredibly accurate.",
-              },
-              {
-                name: "Ravi Mehta",
-                text: "I feel more in control of my health than ever. The app is simple and effective.",
-              },
-            ].map((testimonial, index) => (
-              <div
-                key={index}
-                className={`bg-white p-6 rounded-xl shadow text-center animate-fadeInUp ${animationDelayClasses[index % animationDelayClasses.length]}`}
-                style={{ animationDuration: "1s" }}
-              >
-                <p className="italic mb-4">"{testimonial.text}"</p>
-                <h5 className="font-semibold">{testimonial.name}</h5>
+          {id === "how" && (
+            <>
+              <h3 className="text-4xl font-bold mb-12 text-center text-[#1E90FF]">How It Works</h3>
+              <div className="grid md:grid-cols-3 gap-8 text-center">
+                {["Upload symptoms or reports", "AI analyzes data in real-time", "Receive insights instantly"].map(
+                  (text, i) => (
+                    <motion.div
+                      key={i}
+                      className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transform hover:-translate-y-1 hover:scale-105"
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true }}
+                      variants={animationVariants}
+                      custom={i + 1}
+                    >
+                      <FaCogs className="text-4xl text-[#FFA07A] mb-4 mx-auto animate-spin-slow" />
+                      <h4 className="text-xl font-semibold">Step {i + 1}</h4>
+                      <p>{text}</p>
+                    </motion.div>
+                  )
+                )}
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </>
+          )}
+
+          {id === "faq" && (
+            <>
+              <h3 className="text-4xl font-bold mb-10 text-center text-[#1E90FF]">FAQs</h3>
+              <div className="space-y-6 max-w-3xl mx-auto">
+                {[
+                  {
+                    q: "Is my health data secure?",
+                    a: "Yes. We use blockchain-grade encryption for full privacy.",
+                  },
+                  {
+                    q: "Do I need medical knowledge?",
+                    a: "No. Our app is simple and intuitive for anyone to use.",
+                  },
+                  {
+                    q: "Is it free?",
+                    a: "Yes, we offer both free and premium versions.",
+                  },
+                ].map((f, i) => (
+                  <motion.div
+                    key={i}
+                    className="border-b pb-4"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={animationVariants}
+                    custom={i + 1}
+                  >
+                    <h4 className="font-semibold text-lg flex items-center gap-2 text-[#32CD32]">
+                      <FaQuestionCircle /> {f.q}
+                    </h4>
+                    <p className="ml-6 mt-1">{f.a}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {id === "testimonials" && (
+            <>
+              <h3 className="text-4xl font-bold mb-12 text-center text-[#1E90FF]">What Users Say</h3>
+              <div className="grid md:grid-cols-2 gap-8">
+                {[{ name: "Dr. Priya S.", text: "Accurate and easy-to-use platform." }, { name: "Ravi Mehta", text: "Feels like I have a doctor in my pocket." }].map(
+                  (t, i) => (
+                    <motion.div
+                      key={i}
+                      className="bg-white p-6 rounded-2xl shadow-md text-center hover:shadow-xl transform hover:scale-105"
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true }}
+                      variants={animationVariants}
+                      custom={i + 1}
+                    >
+                      <p className="italic mb-4">"{t.text}"</p>
+                      <h5 className="font-semibold text-[#32CD32]">{t.name}</h5>
+                    </motion.div>
+                  )
+                )}
+              </div>
+            </>
+          )}
+        </motion.section>
+      ))}
 
       {/* Footer */}
-      <footer
-        id="contact"
-        className="bg-blue-600 text-white py-10 px-4"
-      >
+      <footer className="bg-gradient-to-r from-[#1E90FF] to-[#32CD32] text-white py-10 px-4">
         <div className="container mx-auto text-center space-y-4">
           <div className="flex justify-center gap-6 text-xl">
-            <a href="https://facebook.com" aria-label="Facebook" className="hover:text-blue-300 transition">
-              <FaFacebook />
-            </a>
-            <a href="https://twitter.com" aria-label="Twitter" className="hover:text-blue-300 transition">
-              <FaTwitter />
-            </a>
-            <a href="https://instagram.com" aria-label="Instagram" className="hover:text-blue-300 transition">
-              <FaInstagram />
-            </a>
+            {[FaFacebook, FaTwitter, FaInstagram].map((Icon, i) => (
+              <a key={i} href="#" className="hover:text-orange-100 hover:scale-110 transition-transform">
+                <Icon />
+              </a>
+            ))}
           </div>
           <p className="text-sm">&copy; 2025 Health AI. All rights reserved.</p>
         </div>
