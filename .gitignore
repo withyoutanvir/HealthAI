@@ -2,9 +2,7 @@
 node_modules/
 
 # Local environment variables
-.env
-.env.development
-.env.production
+
 
 # Log files
 npm-debug.log*

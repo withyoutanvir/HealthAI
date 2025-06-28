@@ -5,7 +5,7 @@ import crypto from 'crypto';
 import generateToken from '../utils/generateToken.js';
 import sendEmail from '../utils/sendEmail.js';
 
-const JWT_SECRET = process.env.JWT_SECRET;
+
 
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
@@ -37,7 +37,13 @@ export const loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-    if (!JWT_SECRET) return res.status(500).json({ error: 'JWT secret is not defined' });
+    // ✅ Fetch JWT_SECRET at runtime
+    const JWT_SECRET = process.env.JWT_SECRET;
+
+    if (!JWT_SECRET) {
+      console.error('❌ JWT_SECRET is undefined in loginUser');
+      return res.status(500).json({ error: 'JWT secret is not defined' });
+    }
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '7d' });
 
@@ -55,11 +61,10 @@ export const forgotPassword = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     user.resetToken = otp;
-    user.resetTokenExpires = Date.now() + 10 * 60 * 1000; // OTP valid for 10 mins
+    user.resetTokenExpires = Date.now() + 10 * 60 * 1000; // 10 mins
     await user.save();
 
     const message = `
@@ -72,8 +77,7 @@ export const forgotPassword = async (req, res) => {
       <p>Thanks,<br/>Your App Team</p>
     `;
 
-    await sendEmail(user.email, 'Password Reset OTP', message, true); // true = HTML email
-
+    await sendEmail(user.email, 'Password Reset OTP', message, true);
     res.status(200).json({ message: 'OTP sent to your email' });
   } catch (err) {
     console.error('Forgot password error:', err);
@@ -88,7 +92,7 @@ export const resetPassword = async (req, res) => {
     const user = await User.findOne({
       email,
       resetToken: otp,
-      resetTokenExpires: { $gt: Date.now() }, // OTP valid
+      resetTokenExpires: { $gt: Date.now() },
     });
 
     if (!user) return res.status(400).json({ message: 'Invalid or expired OTP' });

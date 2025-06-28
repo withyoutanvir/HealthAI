@@ -12,18 +12,26 @@ const LoginForm = () => {
   console.log("API_BASE:", API_BASE);
 
   const loginUser = async (email, password) => {
-    const res = await fetch(`${API_BASE}/users/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const text = await res.text();
     try {
+      const res = await fetch(`${API_BASE}/api/users/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const text = await res.text();
+      console.log("Login response text:", text);
+
       const data = JSON.parse(text);
-      if (!res.ok) throw new Error(data.message || "Login failed");
+
+      if (!res.ok) {
+        console.error("Login error:", data);
+        throw new Error(data.message || "Login failed");
+      }
+
       return data;
-    } catch {
+    } catch (err) {
+      console.error("Login request failed:", err);
       throw new Error("Invalid username or password");
     }
   };
@@ -31,6 +39,12 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (!email || !password) {
+      setError("Email and password are required");
+      return;
+    }
+
     try {
       const data = await loginUser(email, password);
       localStorage.setItem("token", data.token);

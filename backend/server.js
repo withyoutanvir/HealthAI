@@ -1,13 +1,20 @@
-// backend/server.js
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
 import app from './index.js';
 
-// ✅ Use the Render-provided or fallback port
-const PORT = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Connect to MongoDB and start the server
-mongoose.connect(MONGO_URI)
+// Load .env.development from root folder
+dotenv.config({ path: path.join(__dirname, '../.env.development') });
+
+
+
+const PORT = process.env.PORT || 3000;
+
+mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
     app.listen(PORT, () => {
