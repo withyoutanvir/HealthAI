@@ -20,6 +20,11 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 MODEL_API_URL = "http://localhost:5001/predict"
 
+# ✅ Added root route to confirm service is running
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({"message": "AI Microservice is running!"}), 200
+
 @app.route('/analyze', methods=['POST'])
 def analyze():
     extracted_text = ""
