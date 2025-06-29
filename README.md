@@ -2,12 +2,11 @@
 
 **Health AI** is a full-stack web application that leverages machine learning and NLP to give you precaution based on your symptoms. Users can either enter text or upload a PDF document, and the system processes the input, performs OCR (if needed), and provides AI-powered predictions along with health recommendations.
 
-### 🌐 Live Demo
+### Folks have a look at my Health AI
 👉 [Visit App](https://health-ai-6f9n.vercel.app/)
 
----
 
-## 🔧 Tech Stack
+##  Tech Stack
 
 ### Frontend
 - React.js + Vite
@@ -24,7 +23,6 @@
 - Trained on symptom-disease mapping
 - Uses HuggingFace Transformers
 
----
 
-## 📁 Project Structure
+
 
