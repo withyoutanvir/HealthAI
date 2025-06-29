@@ -20,7 +20,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-console.log('JWT_SECRET in index.js:', process.env.JWT_SECRET); // should print your secret
+
 
 // Use routes
 app.use('/api/analyze', analyzeRoutes);
