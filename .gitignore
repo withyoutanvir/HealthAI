@@ -1,15 +1,22 @@
 # Node dependencies
 node_modules/
-.env*
-# Local environment variables
 
-.env.production
-.env.development
+# Environment variables (local and production)
+.env
+.env.*   # covers .env.production, .env.development, .env.local, etc.
+
 # Log files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Optional: OS / IDE junk
+# Build output (if using Vite, Next.js, etc.)
+dist/
+build/
+
+# OS-specific junk
 .DS_Store
+
+# Editor/IDE settings
 .vscode/
+.idea/
