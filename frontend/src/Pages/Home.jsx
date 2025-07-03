@@ -124,23 +124,38 @@ const HomePage = () => {
       </section>
 
       {/* Features */}
-      <section id="features" className="py-24 px-6 max-w-6xl mx-auto text-center z-10 relative">
-        <h3 className="text-4xl font-bold text-[#1E90FF] mb-12">Key Benefits</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {["AI-Powered Diagnosis", "Intelligent Tracking", "Data Privacy First"].map((title, i) => (
-            <motion.div
-              key={i}
-              whileHover={{ scale: 1.05 }}
-              className="bg-white/10 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-white/20"
-            >
-              <h4 className="text-xl font-semibold text-[#32CD32] mb-2">{title}</h4>
-              <p className="text-gray-200">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, aliquid.
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+<section id="features" className="py-24 px-6 max-w-6xl mx-auto text-center z-10 relative">
+  <h3 className="text-4xl font-bold text-[#1E90FF] mb-12">Key Benefits</h3>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+    {[
+      {
+        title: "AI-Powered Diagnosis",
+        description:
+          "Leverages cutting-edge AI models to identify health issues early, ensuring faster and more accurate diagnosis.",
+      },
+      {
+        title: "Intelligent Tracking",
+        description:
+          "Monitors patient progress and treatment effectiveness in real time, promoting personalized healthcare decisions.",
+      },
+      {
+        title: "Data Privacy First",
+        description:
+          "Implements robust encryption and strict access controls to protect user health data at every stage.",
+      },
+    ].map((feature, i) => (
+      <motion.div
+        key={i}
+        whileHover={{ scale: 1.05 }}
+        className="bg-white/10 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-white/20"
+      >
+        <h4 className="text-xl font-semibold text-[#32CD32] mb-2">{feature.title}</h4>
+        <p className="text-gray-200">{feature.description}</p>
+      </motion.div>
+    ))}
+  </div>
+</section>
+
 
       {/* Testimonials */}
       <section id="testimonials" className="py-24 px-6 max-w-4xl mx-auto text-center z-10 relative">
