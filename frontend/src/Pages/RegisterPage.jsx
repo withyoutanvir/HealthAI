@@ -123,10 +123,7 @@ const RegistrationForm = () => {
   useEffect(() => {
     const onScroll = () => (scrollY.current = window.scrollY);
     window.addEventListener("scroll", onScroll);
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
@@ -150,7 +147,7 @@ const RegistrationForm = () => {
               <input
                 type="text"
                 placeholder="Your Name"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E90FF]"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E90FF] text-black"
                 required
                 value={name}
                 onChange={e => setName(e.target.value)}
@@ -161,7 +158,7 @@ const RegistrationForm = () => {
               <input
                 type="email"
                 placeholder="Email Address"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E90FF]"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E90FF] text-black"
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
@@ -172,7 +169,7 @@ const RegistrationForm = () => {
               <input
                 type="password"
                 placeholder="Enter Password"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E90FF]"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E90FF] text-black"
                 required
                 value={password}
                 onChange={e => setPassword(e.target.value)}
@@ -183,7 +180,7 @@ const RegistrationForm = () => {
               <input
                 type="password"
                 placeholder="Confirm Password"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E90FF]"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E90FF] text-black"
                 required
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
@@ -222,7 +219,7 @@ const RegistrationForm = () => {
                 "Sign Up"
               )}
             </button>
-            <p className="text-center mt-2 text-sm">
+            <p className="text-center mt-2 text-sm text-white">
               Already have an account?{' '}
               <a href="/login" className="text-[#1E90FF] hover:underline font-medium">
                 Login

@@ -137,7 +137,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-black text-white overflow-hidden font-sans">
+    <div className="relative min-h-screen bg-black text-black overflow-hidden font-sans">
       <Suspense fallback={<div />}> <StarryBackground scrollY={scrollY} /> </Suspense>
 
       <div className="flex items-center justify-center min-h-screen px-4 relative z-10">
