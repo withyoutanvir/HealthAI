@@ -1,260 +1,175 @@
 // Required dependencies:
-// npm install framer-motion react-icons react-router-dom
+// npm install three @react-three/fiber @react-three/drei framer-motion react-icons react-router-dom
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import {
-  FaShieldAlt,
-  FaHeartbeat,
-  FaBrain,
-  FaFacebook,
-  FaTwitter,
-  FaInstagram,
-  FaQuestionCircle,
-  FaCogs,
-} from "react-icons/fa";
-
-const animationVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: (i = 1) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.2, duration: 0.6, ease: "easeOut" },
-  }),
-};
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Stars } from "@react-three/drei";
+import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
 
 const Preloader = () => (
   <div className="fixed inset-0 z-[9999] bg-white flex items-center justify-center">
-    <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-[#1E90FF] border-b-[#32CD32]"></div>
+    <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-[#1E90FF] border-b-[#32CD32]" />
   </div>
+);
+
+const Scene = ({ scrollY }) => {
+  const cameraRef = useRef();
+
+  useFrame(({ camera }) => {
+    if (scrollY.current != null) {
+      camera.position.z = 5 + scrollY.current * 0.02;
+    }
+  });
+
+  return (
+    <>
+      <ambientLight intensity={0.5} />
+      <pointLight position={[10, 10, 10]} />
+      <Stars radius={400} depth={100} count={10000} factor={10} fade speed={2} saturation={0.5} />
+    </>
+  );
+};
+
+const Hero3D = ({ scrollY }) => (
+  <Canvas
+    id="bg-canvas"
+    className="fixed top-0 left-0 w-full h-full z-0 pointer-events-none"
+    style={{ position: 'fixed' }}
+  >
+    <Scene scrollY={scrollY} />
+  </Canvas>
 );
 
 const HomePage = () => {
   const [loading, setLoading] = useState(true);
+  const scrollY = useRef(0);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
+    const onScroll = () => (scrollY.current = window.scrollY);
+    window.addEventListener("scroll", onScroll);
+
+    const updateHeight = () => {
+      const bodyHeight = document.body.scrollHeight;
+      const canvas = document.getElementById("bg-canvas");
+      if (canvas) canvas.style.height = `${bodyHeight}px`;
+    };
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", updateHeight);
+    };
   }, []);
 
   if (loading) return <Preloader />;
 
   return (
-    <div className="bg-gradient-to-b from-white to-[#f2f2f2] text-[#333333] font-sans min-h-screen scroll-smooth">
+    <div className="relative text-white font-sans overflow-x-hidden min-h-[300vh] bg-black">
+      <Suspense fallback={<div />}>
+        <Hero3D scrollY={scrollY} />
+      </Suspense>
+
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#1E90FF] to-[#32CD32] text-white p-5 shadow-lg sticky top-0 z-50">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-3xl font-extrabold tracking-wider">Health AI</h1>
-          <nav className="space-x-6 hidden md:flex">
-            {["History", "About", "Features", "Testimonials", "Contact"].map((item, idx) => {
-              const id = item.toLowerCase().replace(/ /g, "");
-              return item === "History" ? (
-                <Link
-                  key={idx}
-                  to="/history"
-                  className="hover:text-yellow-100 transition duration-300 font-medium"
-                >
-                  {item}
-                </Link>
-              ) : (
-                <a
-                  key={idx}
-                  href={`#${id}`}
-                  className="hover:text-yellow-100 transition duration-300 font-medium"
-                >
-                  {item}
-                </a>
-              );
-            })}
-          </nav>
-        </div>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black/70 backdrop-blur-md shadow px-6 py-4 flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-[#1E90FF]">Health AI</h1>
+        <nav className="hidden md:flex space-x-6 text-white">
+          {["History", "About", "Features", "Testimonials", "Contact"].map((item, idx) => {
+            const id = item.toLowerCase().replace(/ /g, "");
+            return item === "History" ? (
+              <Link key={idx} to="/history" className="hover:text-[#32CD32] font-medium transition">
+                {item}
+              </Link>
+            ) : (
+              <a key={idx} href={`#${id}`} className="hover:text-[#32CD32] font-medium transition">
+                {item}
+              </a>
+            );
+          })}
+        </nav>
       </header>
 
-      {/* Hero */}
-      <section
-        id="hero"
-        className="bg-gradient-to-br from-[#1E90FF] via-[#32CD32] to-[#FFA07A] py-24 px-6 text-center"
-      >
+      {/* Hero Section */}
+      <section className="relative flex flex-col items-center justify-center text-center px-4 pt-40 pb-32 z-10">
         <motion.div
-          initial="hidden"
-          whileInView="visible"
-          variants={animationVariants}
-          viewport={{ once: true }}
-          className="bg-white/90 backdrop-blur p-10 rounded-2xl inline-block shadow-xl border border-white/30"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="bg-white/10 backdrop-blur-md border border-white/20 shadow-xl rounded-3xl p-10 max-w-3xl"
         >
-          <h2 className="text-5xl font-extrabold mb-4 text-[#1E90FF] tracking-wide leading-tight">
-            Your Personal Health Assistant
+          <h2 className="text-5xl md:text-6xl font-extrabold text-[#1E90FF] mb-4">
+            Empowering Your Health
           </h2>
-          <p className="text-lg mb-6">AI-powered insights to help you live healthier, longer.</p>
+          <p className="text-lg md:text-xl text-gray-200 mb-6">
+            AI-driven insights and tools to transform your wellbeing.
+          </p>
           <Link to="/register">
-            <button className="bg-[#1E90FF] hover:bg-[#32CD32] text-white px-8 py-3 rounded-lg transition text-lg shadow-md hover:shadow-xl">
+            <button className="bg-[#1E90FF] hover:bg-[#32CD32] text-white font-semibold px-8 py-3 rounded-xl transition shadow-lg">
               Get Started
             </button>
           </Link>
         </motion.div>
       </section>
 
-      {/* Sections */}
-      {["about", "features", "how", "faq", "testimonials"].map((id, index) => (
-        <motion.section
-          id={id}
-          key={id}
-          className="py-20 px-4 container mx-auto"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={animationVariants}
-          custom={index + 1}
-        >
-          {id === "about" && (
-            <>
-              <h3 className="text-4xl font-bold mb-6 text-center text-[#1E90FF]">About Health AI</h3>
-              <p className="text-center max-w-3xl mx-auto text-lg leading-relaxed">
-                Health AI combines cutting-edge AI with intuitive tools to give you real-time diagnostics,
-                intelligent recommendations, and complete control over your health data.
+      {/* About Section */}
+      <section id="about" className="py-24 px-6 max-w-5xl mx-auto text-center z-10 relative">
+        <h3 className="text-4xl font-bold text-[#1E90FF] mb-6">About Us</h3>
+        <p className="text-lg text-gray-300">
+          At Health AI, we believe technology should work hand-in-hand with healthcare. Our platform uses advanced AI to offer personalized health support that’s accessible, secure, and intuitive.
+        </p>
+      </section>
+
+      {/* Features */}
+      <section id="features" className="py-24 px-6 max-w-6xl mx-auto text-center z-10 relative">
+        <h3 className="text-4xl font-bold text-[#1E90FF] mb-12">Key Benefits</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {["AI-Powered Diagnosis", "Intelligent Tracking", "Data Privacy First"].map((title, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.05 }}
+              className="bg-white/10 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-white/20"
+            >
+              <h4 className="text-xl font-semibold text-[#32CD32] mb-2">{title}</h4>
+              <p className="text-gray-200">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, aliquid.
               </p>
-            </>
-          )}
+            </motion.div>
+          ))}
+        </div>
+      </section>
 
-          {id === "features" && (
-            <>
-              <h3 className="text-4xl font-bold mb-12 text-center text-[#1E90FF]">Key Features</h3>
-              <div className="grid md:grid-cols-3 gap-10 text-center">
-                {[
-                  {
-                    icon: <FaBrain className="text-5xl text-[#32CD32] mb-4 animate-bounce" />,
-                    title: "Smart Diagnosis",
-                    desc: "AI-powered real-time analysis based on your symptoms.",
-                  },
-                  {
-                    icon: <FaHeartbeat className="text-5xl text-[#32CD32] mb-4 animate-bounce delay-200" />,
-                    title: "Health Tracker",
-                    desc: "Track vital signs, activity, and sleep easily.",
-                  },
-                  {
-                    icon: <FaShieldAlt className="text-5xl text-[#32CD32] mb-4 animate-bounce delay-400" />,
-                    title: "Secure Data",
-                    desc: "Your health data is encrypted and fully under your control.",
-                  },
-                ].map((f, i) => (
-                  <motion.div
-                    key={i}
-                    className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-all hover:-translate-y-2 hover:scale-105"
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    variants={animationVariants}
-                    custom={i + 1}
-                  >
-                    {f.icon}
-                    <h4 className="text-xl font-semibold mb-2">{f.title}</h4>
-                    <p>{f.desc}</p>
-                  </motion.div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {id === "how" && (
-            <>
-              <h3 className="text-4xl font-bold mb-12 text-center text-[#1E90FF]">How It Works</h3>
-              <div className="grid md:grid-cols-3 gap-8 text-center">
-                {["Upload symptoms or reports", "AI analyzes data in real-time", "Receive insights instantly"].map(
-                  (text, i) => (
-                    <motion.div
-                      key={i}
-                      className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transform hover:-translate-y-1 hover:scale-105"
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true }}
-                      variants={animationVariants}
-                      custom={i + 1}
-                    >
-                      <FaCogs className="text-4xl text-[#FFA07A] mb-4 mx-auto animate-spin-slow" />
-                      <h4 className="text-xl font-semibold">Step {i + 1}</h4>
-                      <p>{text}</p>
-                    </motion.div>
-                  )
-                )}
-              </div>
-            </>
-          )}
-
-          {id === "faq" && (
-            <>
-              <h3 className="text-4xl font-bold mb-10 text-center text-[#1E90FF]">FAQs</h3>
-              <div className="space-y-6 max-w-3xl mx-auto">
-                {[
-                  {
-                    q: "Is my health data secure?",
-                    a: "Yes. We use blockchain-grade encryption for full privacy.",
-                  },
-                  {
-                    q: "Do I need medical knowledge?",
-                    a: "No. Our app is simple and intuitive for anyone to use.",
-                  },
-                  {
-                    q: "Is it free?",
-                    a: "Yes, we offer both free and premium versions.",
-                  },
-                ].map((f, i) => (
-                  <motion.div
-                    key={i}
-                    className="border-b pb-4"
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    variants={animationVariants}
-                    custom={i + 1}
-                  >
-                    <h4 className="font-semibold text-lg flex items-center gap-2 text-[#32CD32]">
-                      <FaQuestionCircle /> {f.q}
-                    </h4>
-                    <p className="ml-6 mt-1">{f.a}</p>
-                  </motion.div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {id === "testimonials" && (
-            <>
-              <h3 className="text-4xl font-bold mb-12 text-center text-[#1E90FF]">What Users Say</h3>
-              <div className="grid md:grid-cols-2 gap-8">
-                {[{ name: "Dr. Priya S.", text: "Accurate and easy-to-use platform." }, { name: "Ravi Mehta", text: "Feels like I have a doctor in my pocket." }].map(
-                  (t, i) => (
-                    <motion.div
-                      key={i}
-                      className="bg-white p-6 rounded-2xl shadow-md text-center hover:shadow-xl transform hover:scale-105"
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true }}
-                      variants={animationVariants}
-                      custom={i + 1}
-                    >
-                      <p className="italic mb-4">"{t.text}"</p>
-                      <h5 className="font-semibold text-[#32CD32]">{t.name}</h5>
-                    </motion.div>
-                  )
-                )}
-              </div>
-            </>
-          )}
-        </motion.section>
-      ))}
+      {/* Testimonials */}
+      <section id="testimonials" className="py-24 px-6 max-w-4xl mx-auto text-center z-10 relative">
+        <h3 className="text-4xl font-bold text-[#1E90FF] mb-10">What Our Users Say</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {[{ name: "Priya S.", quote: "Health AI changed the way I manage my wellness." }, { name: "Ravi M.", quote: "Feels like I have a personal doctor in my pocket." }].map((item, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.05 }}
+              className="bg-white/10 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-white/20"
+            >
+              <p className="italic text-gray-200">"{item.quote}"</p>
+              <h5 className="mt-4 font-semibold text-[#32CD32]">- {item.name}</h5>
+            </motion.div>
+          ))}
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-r from-[#1E90FF] to-[#32CD32] text-white py-10 px-4">
+      <footer className="bg-black border-t border-white/20 py-10 px-4 z-10 relative">
         <div className="container mx-auto text-center space-y-4">
-          <div className="flex justify-center gap-6 text-xl">
+          <div className="flex justify-center gap-6 text-xl text-[#1E90FF]">
             {[FaFacebook, FaTwitter, FaInstagram].map((Icon, i) => (
-              <a key={i} href="#" className="hover:text-orange-100 hover:scale-110 transition-transform">
+              <a key={i} href="#" className="hover:text-[#32CD32] transition-transform">
                 <Icon />
               </a>
             ))}
           </div>
-          <p className="text-sm">&copy; 2025 Health AI. All rights reserved.</p>
+          <p className="text-sm text-gray-400">&copy; 2025 Health AI. All rights reserved.</p>
         </div>
       </footer>
     </div>
