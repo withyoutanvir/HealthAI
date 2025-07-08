@@ -3,37 +3,48 @@ import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-import requests
 
-# Local imports
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from transformers import pipeline
 from utils.utils import clean_text, enrich_prediction
-from opencv_python.pdf_img import convert_pdf_to_images
+from pdf_tools.pdf_img import convert_pdf_to_images
 from processing.ocr import extract_text_from_image
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173"])  # Frontend origin
+CORS(app, origins=["http://localhost:5173"])
 
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-MODEL_API_URL = "http://localhost:5001/predict"
+# ✅ Load model once during app startup
+model = pipeline("text-classification", model="distilbert/distilbert-base-uncased-finetuned-sst-2-english")
 
-# ✅ Added root route to confirm service is running
+# ✅ Health check route
 @app.route("/", methods=["GET"])
 def home():
-    return jsonify({"message": "AI Microservice is running!"}), 200
+    return jsonify({"message": "Unified AI Microservice is running!"}), 200
 
+# ✅ Optional: keep /predict endpoint
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = request.get_json()
+    if not data or 'text' not in data:
+        return jsonify({"error": "No text provided"}), 400
+    try:
+        prediction = model(data['text'])
+        return jsonify(prediction)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ✅ Main processing endpoint
 @app.route('/analyze', methods=['POST'])
 def analyze():
+    print("🔍 Entered /analyze")
     extracted_text = ""
 
-    # Handle PDF
     if request.content_type and "multipart/form-data" in request.content_type:
         if 'file' not in request.files:
             return jsonify({"error": "No file provided"}), 400
-
         file = request.files['file']
         if file.filename == '':
             return jsonify({"error": "Empty filename"}), 400
@@ -54,7 +65,6 @@ def analyze():
             except Exception as e:
                 print(f"Warning: could not remove uploaded file: {e}")
 
-    # Handle text
     elif request.is_json:
         data = request.get_json()
         if not data or 'text' not in data:
@@ -68,21 +78,13 @@ def analyze():
 
     try:
         cleaned_text = clean_text(extracted_text)
-
-        # 🔁 Call AI model microservice
-        model_response = requests.post(MODEL_API_URL, json={"text": cleaned_text})
-        if model_response.status_code != 200:
-            return jsonify({"error": "Model service failed", "details": model_response.text}), 500
-        prediction = model_response.json()
-
-        # Enrich with precaution info
+        prediction = model(cleaned_text)
         precautions = enrich_prediction(prediction, input_text=cleaned_text)
 
         return jsonify({
             "extracted_text": cleaned_text,
             "precautions": precautions
         }), 200
-
     except Exception as e:
         print("Error during prediction/enrichment:", str(e))
         return jsonify({"error": "Internal server error", "details": str(e)}), 500
