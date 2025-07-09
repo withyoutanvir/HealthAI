@@ -55,7 +55,7 @@ Users can input symptoms as **plain text** or **upload a PDF**, and the system p
 - Receive predicted health conditions and precautionary steps.
 
 ## 📁 Folder Structure
-<pre>  ``` 
+<pre>  
 health-ai/
 │ ├── client/
   # React frontend
@@ -77,4 +77,4 @@ health-ai/
   │ ├── assets/ # (Optional) Screenshots or static assets 
   │ ├── README.md
   └── package.json 
-  ``` </pre>
+  </pre>
