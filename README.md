@@ -23,7 +23,6 @@ Users can input symptoms as **plain text** or **upload a PDF**, and the system p
 - ✅ Personalized precautionary health recommendations
 - ✅ OCR integration for PDF input using Tesseract
 - ✅ Real-time AI inference using Flask microservice
-- ✅ Authentication and secure user messaging system
 - ✅ Scalable microservice-based architecture
 
 ---
