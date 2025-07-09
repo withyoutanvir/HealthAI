@@ -6,7 +6,7 @@ Users can input symptoms as **plain text** or **upload a PDF**, and the system p
 
 ---
 ### Home Page
-![Home](./assets/home.png)
+![Home](./assets/Home.png)
 
 
 
