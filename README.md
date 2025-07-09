@@ -1,112 +1,80 @@
-Health AI
-Health AI is a full-stack web application that leverages Machine Learning, OCR, and Natural Language Processing to provide real-time, AI-powered health predictions and precautionary recommendations based on user-provided symptoms.
+# Health AI
 
-Users can either enter text directly or upload a PDF document. The system performs OCR (if needed), processes the input, and uses a trained AI model to suggest likely conditions along with personalized precautions.
+**Health AI** is a full-stack web application that leverages **Machine Learning**, **OCR**, and **Natural Language Processing (NLP)** to provide real-time health condition predictions and personalized precautionary suggestions based on user symptoms.
 
-Live Demo
-→ Try Health AI
+Users can input symptoms as **plain text** or **upload a PDF**, and the system processes the input using an AI microservice to return predictions with over **91% accuracy**.
 
-Features
-Symptom extraction from free text or PDF input (via OCR)
+---
+### Home Page
+![Home](./assets/home.png)
 
-AI-powered disease prediction using multi-label classification
 
-Real-time health recommendations based on predictions
 
-Authentication and messaging system
+## 🚀 Live Demo
 
-Microservice architecture for scalable model inference
+🔗 [Click here to try Health AI](https://health-ai-6f9n.vercel.app/)
 
-91%+ model accuracy on internal evaluation
+---
 
-Tech Stack
-Frontend
-React.js with Vite for fast and modern UI development
+## ✨ Features
 
-TailwindCSS for utility-first responsive styling
+- ✅ Symptom extraction from plain text and PDF files
+- ✅ AI-based disease prediction using multi-label classification
+- ✅ Personalized precautionary health recommendations
+- ✅ OCR integration for PDF input using Tesseract
+- ✅ Real-time AI inference using Flask microservice
+- ✅ Authentication and secure user messaging system
+- ✅ Scalable microservice-based architecture
 
-Backend
-Node.js + Express for authentication and messaging APIs
+---
 
-Flask for serving the machine learning model (as a microservice)
+## 🛠️ Tech Stack
 
-MongoDB for user data and messaging
+### 🖥️ Frontend
+- [React.js](https://reactjs.org/) (with [Vite](https://vitejs.dev/)) — blazing fast and modern SPA
+- [TailwindCSS](https://tailwindcss.com/) — utility-first CSS for responsive design
 
-Machine Learning
-Multi-label classification model trained on a symptom-to-disease dataset
+### 🔙 Backend
+- [Node.js](https://nodejs.org/) + [Express](https://expressjs.com/) — handles authentication, user routes, and messaging
+- [MongoDB](https://www.mongodb.com/) — stores users and messages
 
-Implemented using Hugging Face Transformers
+### 🤖 Machine Learning
+- Multi-label classification model trained on symptom-disease datasets
+- Built with [Hugging Face Transformers](https://huggingface.co/)
+- [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) for PDF text extraction
+- [Flask](https://flask.palletsprojects.com/) API to serve the model as a microservice
 
-Tesseract OCR integration for reading PDF inputs
+---
+🧾 How to Use
+- Open the live app or run it locally.
 
-health-ai/
+- Sign up or log in.
+
+- Enter your symptoms as text or upload a PDF file.
+
+- Receive predicted health conditions and precautionary steps.
+
+## 📁 Folder Structure
+
 │
-├── client/                 # React frontend
-│   ├── public/
-│   └── src/
-│       ├── components/
-│       ├── pages/
-│       └── utils/
+├── client/ # React frontend
+│ ├── public/
+│ └── src/
+│ ├── components/
+│ ├── pages/
+│ └── utils/
 │
-├── server/                 # Node.js + Express backend
-│   ├── controllers/
-│   ├── routes/
-│   ├── models/
-│   └── middleware/
+├── server/ # Node.js backend (Auth + Messaging)
+│ ├── controllers/
+│ ├── routes/
+│ ├── models/
+│ └── middleware/
 │
-├── modelapi/               # Flask-based AI microservice
-│   ├── model_server.py
-│   └── model/              # Trained model files
+├── modelapi/ # Flask microservice for ML model
+│ ├── model_server.py
+│ └── model/ # Pretrained model files
 │
-├── assets/                 # Screenshots or static files (optional)
+├── assets/ # (Optional) Screenshots or static assets
 │
 ├── README.md
 └── package.json
-
-Setup & Installation
-1. Clone the repository
-bash
-Copy
-Edit
-git clone https://github.com/your-username/health-ai.git
-cd health-ai
-2. Setup the frontend (React)
-bash
-Copy
-Edit
-cd client
-npm install
-npm run dev
-3. Setup the backend (Node.js)
-bash
-Copy
-Edit
-cd ../server
-npm install
-npm run start
-4. Setup the model API (Flask)
-bash
-Copy
-Edit
-cd ../modelapi
-# Create a virtual environment
-python -m venv venv
-source venv/bin/activate  # or venv\Scripts\activate on Windows
-pip install -r requirements.txt
-python model_server.py
-Make sure the Flask server is running on the port expected by the Node.js API or frontend.
-
-Usage
-Visit the Live Demo or run locally.
-
-Login or register.
-
-Enter your symptoms as text or upload a PDF.
-
-The system will analyze the input and display:
-
-Predicted health conditions
-
-Suggested precautions
-
-
