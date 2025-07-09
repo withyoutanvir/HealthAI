@@ -56,25 +56,5 @@ Users can input symptoms as **plain text** or **upload a PDF**, and the system p
 
 ## 📁 Folder Structure
 
-│
-├── client/ # React frontend
-│ ├── public/
-│ └── src/
-│ ├── components/
-│ ├── pages/
-│ └── utils/
-│
-├── server/ # Node.js backend (Auth + Messaging)
-│ ├── controllers/
-│ ├── routes/
-│ ├── models/
-│ └── middleware/
-│
-├── modelapi/ # Flask microservice for ML model
-│ ├── model_server.py
-│ └── model/ # Pretrained model files
-│
-├── assets/ # (Optional) Screenshots or static assets
-│
-├── README.md
-└── package.json
+<pre> ## 📁 Folder Structure ``` health-ai/ │ ├── client/ # React frontend │ ├── public/ │ └── src/ │ ├── components/ │ ├── pages/ │ └── utils/ │ ├── server/ # Node.js backend (Auth + Messaging) │ ├── controllers/ │ ├── routes/ │ ├── models/ │ └── middleware/ │ ├── modelapi/ # Flask microservice for ML model │ ├── model_server.py │ └── model/ # Pretrained model files │ ├── assets/ # (Optional) Screenshots or static assets │ ├── README.md └── package.json ``` </pre>
+
