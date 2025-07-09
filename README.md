@@ -45,7 +45,7 @@ Users can input symptoms as **plain text** or **upload a PDF**, and the system p
 - [Flask](https://flask.palletsprojects.com/) API to serve the model as a microservice
 
 ---
-🧾 How to Use
+## 🧾 How to Use
 - Open the live app or run it locally.
 
 - Sign up or log in.
@@ -57,24 +57,21 @@ Users can input symptoms as **plain text** or **upload a PDF**, and the system p
 ## 📁 Folder Structure
 <pre>  
 health-ai/
-│ ├── client/
-  # React frontend
+│ ├── client/ # React frontend
   │ ├── public/ 
   │ └── src/ 
   │ ├── components/ 
   │ ├── pages/
   │ └── utils/
-  │ ├── server/ 
-  # Node.js backend (Auth + Messaging)
+  │ ├── server/ # Node.js backend (Auth + Messaging)
   │ ├── controllers/ 
   │ ├── routes/ 
   │ ├── models/ 
   │ └── middleware/
-  │ ├── modelapi/ 
-  # Flask microservice for ML model
+  │ ├── modelapi/ # Flask microservice for ML model
   │ ├── model_server.py
   │ └── model/ # Pretrained model files 
   │ ├── assets/ # (Optional) Screenshots or static assets 
   │ ├── README.md
   └── package.json 
-  </pre>
+</pre>
