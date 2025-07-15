@@ -62,11 +62,12 @@ health-ai/
   │ ├── components/ 
   │ ├── pages/
   │ └── utils/
-  │ ├── server/ # Node.js backend (Auth + Messaging)
+│ ├── server/ # Node.js backend (Auth + Messaging)
   │ ├── controllers/ 
   │ ├── routes/ 
   │ ├── models/ 
   │ └── middleware/
+| ├──ai_microservice
   │ ├── modelapi/ # Flask microservice for ML model
   │ ├── model_server.py
   │ └── model/ # Pretrained model files 
